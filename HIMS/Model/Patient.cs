@@ -1,0 +1,12 @@
+﻿namespace HIMS.Model
+{
+    public class Patient
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Age { get; set; }
+        public string Problem { get; set; }
+    }
+}
