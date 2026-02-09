@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "mQ1Fk2OYm8E=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\sanjay rajbanshi\\source\\repos\\HIMS\\HIMS\\HIMS.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\sanjay rajbanshi\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.2\\microsoft.aspnetcore.openapi.10.0.2.nupkg.sha512",
+    "C:\\Users\\sanjay rajbanshi\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
