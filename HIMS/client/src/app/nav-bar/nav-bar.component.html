@@ -1,0 +1,29 @@
+<nav class="navbar">
+  <div class="nav-left">
+    <span class="logo">🛒</span>
+    <span class="brand">ShopHub</span>
+  </div>
+
+  <!-- Hamburger Icon -->
+  <div class="hamburger" (click)="toggleMenu()">
+    ☰
+  </div>
+
+ 
+
+  <div class="nav-right">
+
+ <!-- Links -->
+  <ul class="nav-links" [class.open]="isMenuOpen">
+    <li><a routerLink="/" (click)="closeMenu()">Home</a></li>
+    <li><a routerLink="/products" (click)="closeMenu()">Products</a></li>
+    <li><a routerLink="/profile" (click)="closeMenu()">Profile</a></li>
+  </ul>
+
+    <div class="cart">
+      🛒
+      <span class="badge">{{ cartCount }}</span>
+    </div>
+    <button class="admin-btn">Admin Login</button>
+  </div>
+</nav>
