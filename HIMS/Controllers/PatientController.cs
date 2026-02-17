@@ -1,7 +1,5 @@
-﻿
-
-
-using HIMS.Dbhospital;
+﻿using HIMS.DTOs;
+using HIMS.Data;
 using HIMS.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,72 +10,94 @@ namespace HIMS.Controllers
     [Route("api/[controller]")]
     public class PatientController : ControllerBase
     {
-        private readonly AppDb _context;
+        private readonly AppDbContext _context;
 
-        public PatientController(AppDb context)
+        public PatientController(AppDbContext context)
         {
             _context = context;
         }
 
-        // ✅ Create Patient
-        [HttpPost]
-        public async Task<IActionResult> Create(Patient patient)
+        //  Create Patient
+        [HttpPost("createpatient")]
+        public async Task<IActionResult> Create(CreatePatientDto dto)
         {
-            if (patient.Age <= 0)
-                return BadRequest("Age must be greater than 0");
-
-            patient.Id = Guid.NewGuid();   // generate Guid
-
+           
+           
+                var patient = new Patient
+                {
+                    Id = Guid.NewGuid(),
+                    Name = dto.Name,
+                    Address = dto.Address,
+                    PhoneNumber = dto.PhoneNumber,
+                    Age = dto.Age,
+                    Problem = dto.Problem,
+                    Password = dto.Password
+                };
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
+            return Ok("Patient is created successfully");
 
-            return Ok(patient);
         }
 
-        // ✅ Get All Patients
+        //  Get All Patients
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<List<PatientDto>>> GetAll()
         {
-            var patients = await _context.Patients.ToListAsync();
+            var patients = await _context.Patients
+                .Select(p => new PatientDto
+                {
+                    Id = p.Id,
+                    Name = p.Name ?? string.Empty,
+                    Address = p.Address ?? string.Empty,
+                    Age = p.Age,
+                    Problem = p.Problem ?? string.Empty
+                })
+                 .ToListAsync();
             return Ok(patients);
         }
 
-        // ✅ Get Patient By Id
+        //  Get Patient By Id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var patient = await _context.Patients.FirstOrDefaultAsync(x => x.Id == id);
-
+            var patient = await _context.Patients
+                .Where(p => p.Id == id)
+                .Select(p => new PatientDto
+                {
+                    Id = p.Id,
+                    Name = p.Name ?? string.Empty,
+                    Address = p.Address ?? string.Empty,
+                    Age = p.Age,
+                    Problem = p.Problem ?? string.Empty
+                })
+                .FirstOrDefaultAsync();
             if (patient == null)
-                return NotFound("Patient not found");
-
+                return NotFound("Patient not found");   
             return Ok(patient);
         }
 
-        // ✅ Update Patient
+        //  Update Patient
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, Patient updatedPatient)
+        public async Task<IActionResult> Update(Guid id, UpdatePatientDto dto)
         {
-            var patient = await _context.Patients.FirstOrDefaultAsync(x => x.Id == id);
-
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id == id);
             if (patient == null)
                 return NotFound("Patient not found");
-
-            patient.Name = updatedPatient.Name;
-            patient.Address = updatedPatient.Address;
-            patient.PhoneNumber = updatedPatient.PhoneNumber;
-            patient.Age = updatedPatient.Age;
-            patient.Problem = updatedPatient.Problem;
+            patient.Name = dto.Name;
+            patient.Address = dto.Address;
+            patient.PhoneNumber = dto.PhoneNumber;
+            patient.Age = dto.Age;
+            patient.Problem = dto.Problem;
 
             await _context.SaveChangesAsync();
-            return Ok(patient);
+            return Ok("Patient updated successfully");
         }
 
-        // ✅ Delete Patient
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var patient = await _context.Patients.FirstOrDefaultAsync(x => x.Id == id);
+            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id == id);
 
             if (patient == null)
                 return NotFound("Patient not found");
