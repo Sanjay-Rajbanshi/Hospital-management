@@ -30,7 +30,7 @@ namespace HIMS.Controllers
                 StaffName = a.Staff?.Name ?? string.Empty,
                 StaffRole = a.Staff != null ? a.Staff.Role.ToString() : string.Empty,
                 AppointmentDate = a.AppointmentDate,
-                Status = a.Status,
+                AppointmentStatus = a.AppointmentStatus,
                 Notes = a.Notes
             });
 
@@ -66,7 +66,7 @@ namespace HIMS.Controllers
                     PatientId = dto.PatientId,
                     StaffId = dto.StaffId,
                     AppointmentDate = dto.AppointmentDate,
-                    Status = "Booked",
+                    AppointmentStatus = AppointmentStatus.Booked,
                     Notes = dto.Notes ?? string.Empty
                 };
 
@@ -81,7 +81,7 @@ namespace HIMS.Controllers
                     StaffName = added.Staff?.Name ?? string.Empty,
                     StaffRole = added.Staff != null ? added.Staff.Role.ToString() : string.Empty,
                     AppointmentDate = added.AppointmentDate,
-                    Status = added.Status,
+                    AppointmentStatus = added.AppointmentStatus,
                     Notes = added.Notes
                 };
 
@@ -115,7 +115,7 @@ namespace HIMS.Controllers
                 StaffName = updated.Staff?.Name ?? string.Empty,
                 StaffRole = updated.Staff != null ? updated.Staff.Role.ToString() : string.Empty,
                 AppointmentDate = updated.AppointmentDate,
-                Status = updated.Status,
+                AppointmentStatus = updated.AppointmentStatus,
                 Notes = updated.Notes
             };
 
@@ -130,5 +130,6 @@ namespace HIMS.Controllers
 
             return NoContent();
         }
+        
     }
 }

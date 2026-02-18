@@ -47,8 +47,8 @@ namespace HIMS.Services
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
 
-           
-#pragma warning disable CS8603 
+
+#pragma warning disable CS8603
             return await _context.Appointments
                                  .Include(a => a.Patient)
                                  .Include(a => a.Staff)
@@ -80,7 +80,7 @@ namespace HIMS.Services
 
             if (appointment == null) return null!;
 
-            appointment.Status = "Cancelled";
+            appointment.AppointmentStatus = AppointmentStatus.Cancelled;
             _context.Appointments.Update(appointment);
             await _context.SaveChangesAsync();
 

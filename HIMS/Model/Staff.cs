@@ -2,7 +2,7 @@
 
 namespace HIMS.Model
 {
-    // Base Person class (if not already)
+    
     public class Person
     {
         public Guid Id { get; set; }
