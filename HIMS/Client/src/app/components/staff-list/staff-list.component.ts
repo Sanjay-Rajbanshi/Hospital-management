@@ -8,14 +8,7 @@ import { StaffService } from '../../services/staff.service';
   imports: [CommonModule],
   templateUrl: './staff-list.component.html',
   styleUrl: './staff-list.component.css',
-  template: `
-    <h2>Staff</h2>
-    <ul>
-      <li *ngFor="let staff of staffs">
-        {{ staff.id }} - {{ staff.name }} - {{ staff.role }}
-      </li>
-    </ul>
-  `
+ 
 })
 export class StaffListComponent {
 staffs: any[] = [];

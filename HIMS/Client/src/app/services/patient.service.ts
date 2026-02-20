@@ -12,7 +12,8 @@ private apiUrl = 'https://localhost:7050/api/patient';
     return this.http.get<any[]>(this.apiUrl);
   }
   createPatient(patient: any): Observable<any>{
-    return this.http.post<any>(this.apiUrl, patient);
+  let Url = 'https://localhost:7050/api/patient/createpatient';
+    return this.http.post<any>(Url, patient);
   }
   getPatientById(id: string): Observable<any>{
     return this.http.get<any>(`${this.apiUrl}/${id}`);

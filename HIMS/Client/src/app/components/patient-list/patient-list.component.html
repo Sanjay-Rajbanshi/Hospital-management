@@ -1,1 +1,47 @@
-<p>patient-list works!</p>
+<h2>Add Patient</h2>
+
+<form (ngSubmit)="addOrUpdatePatient()">
+
+  <input type="text" [(ngModel)]="patient.name" name="name" placeholder="Name" required>
+  <br><br>
+
+  <input type="text" [(ngModel)]="patient.address" name="address" placeholder="Address">
+  <br><br>
+
+  <input type="text" [(ngModel)]="patient.phoneNumber" name="phoneNumber" placeholder="Phone Number" required>
+  <br><br>
+
+  <input type="number" [(ngModel)]="patient.age" name="age" placeholder="Age">
+  <br><br>
+
+  <input type="text" [(ngModel)]="patient.problem" name="problem" placeholder="Problem">
+  <br><br>
+
+  <button type="submit" (click)="addPatient()">
+    {{ editIndex === null ? 'Add Patient' : 'Update Patient' }}
+  </button>
+
+
+</form>
+
+<hr>
+
+<h3>Patient List</h3>
+
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Address</th>
+    <th>Phone</th>
+    <th>Age</th>
+    <th>Problem</th>
+  </tr>
+
+  <tr *ngFor="let p of patients">
+    <td>{{ p.name }}</td>
+    <td>{{ p.address }}</td>
+    <td>{{ p.phoneNumber }}</td>
+    <td>{{ p.age }}</td>
+    <td>{{ p.problem }}</td>
+  </tr>
+</table>

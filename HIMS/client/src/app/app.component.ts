@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import { Router } from '@angular/router';
@@ -9,15 +9,10 @@ import { StaffListComponent } from './components/staff-list/staff-list.component
 @Component({
   selector: 'app-root',
   standalone: true,
+  templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  imports: [CommonModule, AppointmentListComponent, PatientListComponent, StaffListComponent],
-  template: `
-    <h1>HIMS Dashboard</h1>
-    <app-patient-list></app-patient-list>
-    <app-staff-list></app-staff-list>
-    <app-appointment-list></app-appointment-list>
-  `
-})
+  imports: [CommonModule,HttpClientModule, AppointmentListComponent, PatientListComponent, StaffListComponent]
+  })
 export class AppComponent {
   
   
