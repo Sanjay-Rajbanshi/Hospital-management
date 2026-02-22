@@ -21,7 +21,7 @@ private apiUrl = 'https://localhost:7050/api/patient';
   updatePatient(id: string, patient: any): Observable<any>{
     return this.http.put<any>(`${this.apiUrl}/${id}`, patient);
   }
-  deletePatient(id: string, patient:any):Observable<any>{
+  deletePatient(id: string):Observable<any>{
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 }

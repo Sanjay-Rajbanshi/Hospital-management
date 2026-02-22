@@ -29,13 +29,12 @@ namespace HIMS.Controllers
                     Name = dto.Name,
                     Address = dto.Address,
                     PhoneNumber = dto.PhoneNumber,
-                    Age = dto.Age,
-                    Problem = dto.Problem,
-                    Password = dto.Password
+                    DateOfBirth = dto.DateOfBirth,
+                    Gender = dto.Gender
                 };
             _context.Patients.Add(patient);
             await _context.SaveChangesAsync();
-            return Ok("Patient is created successfully");
+            return Ok(new {message = "Patient is created successfully" });
 
         }
 
@@ -49,8 +48,9 @@ namespace HIMS.Controllers
                     Id = p.Id,
                     Name = p.Name ?? string.Empty,
                     Address = p.Address ?? string.Empty,
-                    Age = p.Age,
-                    Problem = p.Problem ?? string.Empty
+                   PhoneNumber = p.PhoneNumber ?? string.Empty,
+                    DateOfBirth = p.DateOfBirth,    
+                    Gender = p.Gender ?? string.Empty
                 })
                  .ToListAsync();
             return Ok(patients);
@@ -67,8 +67,9 @@ namespace HIMS.Controllers
                     Id = p.Id,
                     Name = p.Name ?? string.Empty,
                     Address = p.Address ?? string.Empty,
-                    Age = p.Age,
-                    Problem = p.Problem ?? string.Empty
+                    DateOfBirth= p.DateOfBirth,
+                    Gender = p.Gender ?? string.Empty,
+                    PhoneNumber = p.PhoneNumber?? string.Empty
                 })
                 .FirstOrDefaultAsync();
             if (patient == null)
@@ -82,15 +83,15 @@ namespace HIMS.Controllers
         {
             var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id == id);
             if (patient == null)
-                return NotFound("Patient not found");
+                return NotFound(new { message = "Patient not found" });
             patient.Name = dto.Name;
             patient.Address = dto.Address;
             patient.PhoneNumber = dto.PhoneNumber;
-            patient.Age = dto.Age;
-            patient.Problem = dto.Problem;
+            patient.DateOfBirth = dto.DateOfBirth;
+            patient.Gender = dto.Gender;
 
             await _context.SaveChangesAsync();
-            return Ok("Patient updated successfully");
+            return Ok(new { message = "Patient updated successfully" });
         }
 
         
@@ -100,12 +101,12 @@ namespace HIMS.Controllers
             var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id == id);
 
             if (patient == null)
-                return NotFound("Patient not found");
+                return NotFound(new { message = "Patient not found" });
 
             _context.Patients.Remove(patient);
             await _context.SaveChangesAsync();
 
-            return Ok("Patient deleted successfully");
+            return Ok(new { message = "Patient deleted successfully" });
         }
     }
 }
