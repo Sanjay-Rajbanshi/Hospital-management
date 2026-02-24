@@ -7,7 +7,7 @@ import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { HttpClientModule } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
 ModuleRegistry.registerModules([AllCommunityModule]);
-
+declare var bootstrap: any;
 @Component({
   selector: 'patient-list',
   standalone: true,
@@ -18,12 +18,14 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class PatientListComponent implements OnInit {
   patients: any[]= [];
+  
+  
   columnDefs = [
   { headerName: 'Id', field: 'id' },
   { headerName: 'Name', field: 'name' },
   { headerName: 'Address', field: 'address' },
-  { headerName: 'Phone', field: 'phoneNumber' },
-  { headerName: 'DOB', field: 'dateOfBirth' },
+  // { headerName: 'Phone', field: 'phoneNumber' },
+  // { headerName: 'DOB', field: 'dateOfBirth' },
 
   {
     headerName: 'Age',
@@ -34,59 +36,41 @@ export class PatientListComponent implements OnInit {
     }
   },
 
-  { headerName: 'Gender', field: 'gender' },
+  // { headerName: 'Gender', field: 'gender' },
+ 
   {
-    headerName: 'Actions',
-    cellRenderer: (params: any) => {
-
-      const viewBtn =document.createElement('button');
-      viewBtn.innerText = 'View';
-      viewBtn.className ='btn btn-info btn-sm me-2';
-      viewBtn.addEventListener('click', ()=>{
-        setTimeout(() => {
-          params.context.componentParent.viewPatient(params.data);
-        });
-        
-      });
-
-     const container = document.createElement('div');
-     const editBtn = document.createElement('button');
-     editBtn.innerText = 'Edit';
-     editBtn.className = 'btn btn-primary btn-sm me-2';
-     editBtn.addEventListener('click', ()=>{
-      setTimeout(() => {
-        params.context.componentParent.editPatient(params.data);
-      });
-      
-     });
-
-
-     const deleteBtn = document.createElement('button');
-     deleteBtn.innerText = 'Delete';
-     deleteBtn.className = 'btn btn-danger btn-sm';
-     deleteBtn.addEventListener('click', ()=>
-    {
-      setTimeout(()=>{
-        params.context.componentParent.deletePatient(params.data.id);
-      });
-      
-    });
-
-    container.appendChild(viewBtn);
-    container.appendChild(editBtn);
-    container.appendChild(deleteBtn);
-    return container;
-    }
-    
+  headerName: 'Actions',
+  field: 'actions',
+  cellRenderer: () => {
+    return `
+      <button class="btn btn-info btn-sm view-btn">View</button>
+      <button class="btn btn-primary btn-sm edit-btn">Edit</button>
+      <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+    `;
   },
-  
+  onCellClicked: (params: any) => {
+
+    if (params.event.target.classList.contains('view-btn')) {
+      this.viewPatient(params.data);
+    }
+
+    if (params.event.target.classList.contains('edit-btn')) {
+      this.editPatient(params.data);
+    }
+
+    if (params.event.target.classList.contains('delete-btn')) {
+      this.deletePatient(params.data.id);
+    }
+  }
+}
 ];
 selectedPatient: any = null;
 isViewMode = false;
 
 viewPatient(patient: any){
-  this.selectedPatient={ ...patient};
+  this.selectedPatient= patient;
   this.isViewMode= true;
+  
   
 }
 closeViewModal(){
@@ -105,7 +89,7 @@ closeViewModal(){
   ngOnInit(): void{
     this.patientForm = this.fb.group({
       name: ['', Validators.required],
-      address: [''],
+      address: ['', Validators.required],
         phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       dateOfBirth: ['', Validators.required],
       gender: ['', Validators.required],
@@ -155,8 +139,9 @@ closeViewModal(){
 
   loadPatients(){
     this.patientService.getPatient().subscribe(data =>{
-      this.patients = data;
-    })
+      this.patients = [...data];
+      
+    });
   }
   addPatient(){
     this.patientService.createPatient(this.patientForm.value).subscribe({
@@ -177,6 +162,7 @@ closeViewModal(){
       dateOfBirth: patient.dateOfBirth?.substring(0,10),
       gender: patient.gender
     });
+    this.openModal();
   }
   updatePatient(){
     if(!this.selectedPatientid) 
@@ -186,6 +172,9 @@ closeViewModal(){
       next: (res: any) =>{
         alert(res.message);
         this.loadPatients();
+        this.resetForm();
+        this.selectedPatientid = null;
+        this.isViewMode = false;
        
 
       },
@@ -199,6 +188,8 @@ closeViewModal(){
         next: (res: any) =>{
           alert(res.message);
           this.loadPatients();
+          this.selectedPatient = null;
+          this.isViewMode = false;
           
         
         },
@@ -207,6 +198,26 @@ closeViewModal(){
       });
     }
   }
+  cancelAction(){
+    this.patientForm.reset();
+    this.selectedPatientid= null;
+  }
+  
+
+modalInstance: any;
+openModal() {
+  const modalEl = document.getElementById('patientModal');
+  if (!this.modalInstance) {
+    this.modalInstance = new bootstrap.Modal(modalEl);
+  }
+  this.modalInstance.show();
+}
+
+closeModal() {
+  if (this.modalInstance) {
+    this.modalInstance.hide();
+  }
+}
 
 resetForm(){
   this.patientForm.reset();

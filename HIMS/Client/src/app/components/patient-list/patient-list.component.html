@@ -1,6 +1,17 @@
-<h2>Add Patient</h2>
 
-<form [formGroup]="patientForm" (ngSubmit)="selectedPatientid ? updatePatient():addPatient()">
+<button type="button" class="btn btn-primary" (click)="openModal()">
+  Create New Patient
+</button>
+
+<div class="modal fade" id="patientModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Patient</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="patientForm" (ngSubmit)="selectedPatientid ? updatePatient():addPatient()">
   <div>
     <label for="name">Full Name</label>
     <input type="text" id="name" formControlName="name" autocomplete="name" placeholder="Enter the full name">
@@ -52,9 +63,24 @@
     Add Patient</button>
 
 <button type="button" *ngIf="selectedPatientid" (click)="updatePatient()" class="btn btn-primary">Update Patient</button>
-</form>
+<button 
+  type="button"
+  class="btn btn-secondary ms-2"
+  (click)="cancelAction()">
+  Clear
+</button>
 
-<hr>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
 
 <h3>Patient List</h3>
 
@@ -65,7 +91,9 @@ style="width:100%; height:500px;"
 [rowData] = "patients"
 [columnDefs]="columnDefs"
 [context]="{ componentParent: this }"
+
 [pagination]="true">
+
 </ag-grid-angular>
 
 

@@ -64,8 +64,8 @@
   background: #084298;
 }
 
-/* Hamburger */
-.hamburger {
+
+.meu {
   display: none;
   font-size: 26px;
   cursor: pointer;
@@ -73,7 +73,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .hamburger {
+  .meu {
     display: block;
   }
 
