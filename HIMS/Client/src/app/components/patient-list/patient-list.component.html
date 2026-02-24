@@ -43,12 +43,11 @@
       <option value="">Select</option>
       <option value="Male">Male</option>
       <option value="Female">Female</option>
+      <option value="Other">Other</option>
     </select>
   </div>
 
-  <!-- <button type="submit" (click)="addPatient()">
-    {{ selectedPatientid? 'Update Patient' : 'Add Patient' }}
-  </button> -->
+
   <button type="button" *ngIf="!selectedPatientid" (click)="addPatient()" class="btn btn-success">
     Add Patient</button>
 
@@ -68,3 +67,37 @@ style="width:100%; height:500px;"
 [context]="{ componentParent: this }"
 [pagination]="true">
 </ag-grid-angular>
+
+
+
+<div class="modal fade show d-block" *ngIf="isViewMode">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Patient Details</h5>
+     
+      </div>
+
+      <div class="modal-body">
+        <p><strong>Name:</strong> {{selectedPatient?.name}}</p>
+        <p><strong>DOB:</strong> {{selectedPatient?.dateOfBirth | date}}</p>
+        <p><strong>Age:</strong> {{calculateAge(selectedPatient?.dateOfBirth)}} years</p>
+        <p><strong>Gender:</strong> {{selectedPatient?.gender}}</p>
+        <p><strong>Phone:</strong> {{selectedPatient?.phoneNumber}}</p>
+        <p><strong>Address:</strong> {{selectedPatient?.address}}</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary"
+                (click)="isViewMode = false">
+          Close
+        </button>
+      
+      </div>
+
+    </div>
+  </div>
+</div>
+
+

@@ -5,7 +5,7 @@ import {ReactiveFormsModule, FormBuilder, FormGroup, Validators} from '@angular/
 import {AgGridModule} from 'ag-grid-angular'
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { HttpClientModule } from '@angular/common/http';
-
+import { ChangeDetectorRef } from '@angular/core';
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
@@ -24,16 +24,40 @@ export class PatientListComponent implements OnInit {
   { headerName: 'Address', field: 'address' },
   { headerName: 'Phone', field: 'phoneNumber' },
   { headerName: 'DOB', field: 'dateOfBirth' },
+
+  {
+    headerName: 'Age',
+    valueGetter: (params: any)=>{
+      const dob = params.data.dateOfBirth;
+      if(!dob) return '';
+      return this.calculateAge(dob);
+    }
+  },
+
   { headerName: 'Gender', field: 'gender' },
   {
     headerName: 'Actions',
     cellRenderer: (params: any) => {
+
+      const viewBtn =document.createElement('button');
+      viewBtn.innerText = 'View';
+      viewBtn.className ='btn btn-info btn-sm me-2';
+      viewBtn.addEventListener('click', ()=>{
+        setTimeout(() => {
+          params.context.componentParent.viewPatient(params.data);
+        });
+        
+      });
+
      const container = document.createElement('div');
      const editBtn = document.createElement('button');
      editBtn.innerText = 'Edit';
      editBtn.className = 'btn btn-primary btn-sm me-2';
      editBtn.addEventListener('click', ()=>{
-      params.context.componentParent.editPatient(params.data);
+      setTimeout(() => {
+        params.context.componentParent.editPatient(params.data);
+      });
+      
      });
 
 
@@ -42,24 +66,41 @@ export class PatientListComponent implements OnInit {
      deleteBtn.className = 'btn btn-danger btn-sm';
      deleteBtn.addEventListener('click', ()=>
     {
-      params.context.componentParent.deletePatient(params.data.id);
+      setTimeout(()=>{
+        params.context.componentParent.deletePatient(params.data.id);
+      });
+      
     });
 
-
+    container.appendChild(viewBtn);
     container.appendChild(editBtn);
     container.appendChild(deleteBtn);
     return container;
     }
     
-  }
+  },
+  
 ];
+selectedPatient: any = null;
+isViewMode = false;
 
+viewPatient(patient: any){
+  this.selectedPatient={ ...patient};
+  this.isViewMode= true;
+  
+}
+closeViewModal(){
+  this.isViewMode = false;
+  this.selectedPatient =null
+}
   
   patientForm!: FormGroup;
   selectedPatientid: string | null = null;
 
-  constructor(private patientService: PatientService, 
-    private fb: FormBuilder
+  constructor(
+    private patientService: PatientService, 
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {}
   ngOnInit(): void{
     this.patientForm = this.fb.group({
@@ -67,16 +108,41 @@ export class PatientListComponent implements OnInit {
       address: [''],
         phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       dateOfBirth: ['', Validators.required],
-      gender: ['', Validators.required]
+      gender: ['', Validators.required],
+
+      age: [{value: '', disabled: true}]
+
+    });
+    this.patientForm.get('dateOfBirth')?.valueChanges.subscribe(dob=>{
+      if (dob){
+        const age =this.calculateAge(dob);
+        this.patientForm.patchValue({age:age});
+      }
     });
     this.loadPatients();
   }
+
+
+  calculateAge(dob: string): number{
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() <birthDate.getDate())
+    ){
+      age--;
+    }
+    return age;
+  } 
   
   onSubmit() {
 
   if (this.patientForm.invalid) {
     this.patientForm.markAllAsTouched();
-    return;  // 🚨 STOP here if invalid
+    return;  //  STOP here if invalid
   }
 
   // Only runs if form is valid
@@ -120,7 +186,7 @@ export class PatientListComponent implements OnInit {
       next: (res: any) =>{
         alert(res.message);
         this.loadPatients();
-        this.resetForm();
+       
 
       },
       error: (err) => console.error(err)
@@ -133,13 +199,15 @@ export class PatientListComponent implements OnInit {
         next: (res: any) =>{
           alert(res.message);
           this.loadPatients();
-        //this.patients = this.patients.filter(p => p.id !== id);
+          
+        
         },
         error: (err) =>console.error(err)
 
       });
     }
   }
+
 resetForm(){
   this.patientForm.reset();
   this.selectedPatientid = null;
