@@ -9,13 +9,6 @@ import { RouterLink, RouterModule } from '@angular/router';
   styleUrl: './menu-bar.component.css'
 })
 export class MenuBarComponent {
-isMenuOpen = false;
 
-toggleMenu(){
-this.isMenuOpen = !this.isMenuOpen;
-}
-closeMenu(){
-  this.isMenuOpen =false;
-}
 
-}
+ }

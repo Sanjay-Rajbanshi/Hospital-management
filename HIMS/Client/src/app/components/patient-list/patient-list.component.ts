@@ -19,6 +19,25 @@ declare var bootstrap: any;
 export class PatientListComponent implements OnInit {
   patients: any[]= [];
   
+  ngOnInit(): void{
+    this.patientForm = this.fb.group({
+      name: ['', Validators.required],
+      address: ['', Validators.required],
+        phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      dateOfBirth: ['', Validators.required],
+      gender: ['', Validators.required],
+
+      age: [{value: '', disabled: true}]
+
+    });
+    this.patientForm.get('dateOfBirth')?.valueChanges.subscribe(dob=>{
+      if (dob){
+        const age =this.calculateAge(dob);
+        this.patientForm.patchValue({age:age});
+      }
+    });
+    this.loadPatients();
+  }
   
   columnDefs = [
   { headerName: 'Id', field: 'id' },
@@ -86,25 +105,7 @@ closeViewModal(){
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {}
-  ngOnInit(): void{
-    this.patientForm = this.fb.group({
-      name: ['', Validators.required],
-      address: ['', Validators.required],
-        phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      dateOfBirth: ['', Validators.required],
-      gender: ['', Validators.required],
-
-      age: [{value: '', disabled: true}]
-
-    });
-    this.patientForm.get('dateOfBirth')?.valueChanges.subscribe(dob=>{
-      if (dob){
-        const age =this.calculateAge(dob);
-        this.patientForm.patchValue({age:age});
-      }
-    });
-    this.loadPatients();
-  }
+  
 
 
   calculateAge(dob: string): number{

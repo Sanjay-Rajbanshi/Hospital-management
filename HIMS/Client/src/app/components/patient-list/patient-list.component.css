@@ -1,0 +1,99 @@
+/* Modal Header */
+.modal-header {
+  background-color: #361bd0;
+  color: white;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* Modal Content */
+.modal-content {
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 25px;
+  background-color: rgb(243, 226, 226);
+}
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+  color: #333;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  transition: 0.3s ease;
+}
+
+/* Focus Effect */
+input:focus,
+select:focus {
+  border-color: #bdd1ee;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
+  outline: none;
+}
+button {
+  min-width: 100px;
+}
+
+.btn-success {
+  border-radius: 6px;
+}
+
+.btn-primary {
+  border-radius: 6px;
+}
+
+.btn-secondary {
+  border-radius: 6px;
+}
+.modal-body p {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.modal-body strong {
+  color: #d2dff3;
+}
+.ag-theme-alpine {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  
+}
+.page-header{
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.table-container{
+    max-width: 1000px;
+    margin: auto;
+    margin-top: 20px;
+    
+}
+.table-name{
+    text-align: center;
+}
+:host {
+  display: block;
+  
+  background-color: #cfd4d9;  
+  padding: 20px;
+}

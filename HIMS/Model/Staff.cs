@@ -18,11 +18,11 @@ namespace HIMS.Model
         }
     }
 
-    // Staff inherits Person
+    
     public class Staff : Person
     {
-        public Role Role { get; set; }  // Doctor, Nurse, Admin, etc.
-        public string Department { get; set; } // optional
+        public Role Role { get; set; } 
+        public string Department { get; set; } 
         public string PhoneNumber { get; set; }
     }
 
