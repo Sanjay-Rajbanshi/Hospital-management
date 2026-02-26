@@ -1,4 +1,5 @@
-﻿using HIMS.Interfaces;
+﻿using HIMS.DTO;
+using HIMS.Interfaces;
 using HIMS.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,18 +32,35 @@ namespace HIMS.Controllers
             return Ok(staff);
         }
 
-        [HttpPost("Create Staff")]
-        public async Task<IActionResult> AddStaff([FromBody] Staff staff)
+        [HttpPost]
+        public async Task<IActionResult> AddStaff([FromBody] StaffDto staffDto)
         {
+            var staff = new Staff
+            {
+                Id = Guid.NewGuid(),
+                Name = staffDto.Name,
+                DateOfBirth = staffDto.DateOfBirth,
+                Role = staffDto.Role,
+                Department = staffDto.Department,
+                PhoneNumber = staffDto.PhoneNumber
+            };
+
             var added = await _staffService.AddStaffAsync(staff);
             return CreatedAtAction(nameof(GetStaffById), new { id = added.Id }, added);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStaff(Guid id, [FromBody] Staff staff)
+        public async Task<IActionResult> UpdateStaff(Guid id, [FromBody] StaffDto staffDto)
         {
-            if (id != staff.Id) return BadRequest("ID mismatch");
-            var updated = await _staffService.UpdateStaffAsync(staff);
+            var existing = await _staffService.GetStaffByIdAsync(id);
+            if (existing == null) return NotFound();
+            existing.Name = staffDto.Name;
+            existing.DateOfBirth = staffDto.DateOfBirth;
+            existing.Role = staffDto.Role;
+            existing.Department = staffDto.Department;
+            existing.PhoneNumber = staffDto.PhoneNumber;
+
+            var updated = await _staffService.UpdateStaffAsync(existing);
             return Ok(updated);
         }
 

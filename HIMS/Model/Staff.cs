@@ -31,6 +31,7 @@ namespace HIMS.Model
     {
         Doctor,
         Nurse,
-        Admin
+        Admin,
+        Receptionist
     }
 }

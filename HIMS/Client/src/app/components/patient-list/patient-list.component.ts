@@ -19,29 +19,11 @@ declare var bootstrap: any;
 export class PatientListComponent implements OnInit {
   patients: any[]= [];
   
-  ngOnInit(): void{
-    this.patientForm = this.fb.group({
-      name: ['', Validators.required],
-      address: ['', Validators.required],
-        phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      dateOfBirth: ['', Validators.required],
-      gender: ['', Validators.required],
 
-      age: [{value: '', disabled: true}]
-
-    });
-    this.patientForm.get('dateOfBirth')?.valueChanges.subscribe(dob=>{
-      if (dob){
-        const age =this.calculateAge(dob);
-        this.patientForm.patchValue({age:age});
-      }
-    });
-    this.loadPatients();
-  }
   
   columnDefs = [
   { headerName: 'Id', field: 'id' },
-  { headerName: 'Name', field: 'name' },
+  { headerName: 'Name', field: 'name', filter: 'agTextColumnFilter' },
   { headerName: 'Address', field: 'address' },
   // { headerName: 'Phone', field: 'phoneNumber' },
   // { headerName: 'DOB', field: 'dateOfBirth' },
@@ -123,6 +105,26 @@ closeViewModal(){
     return age;
   } 
   
+  ngOnInit(): void{
+    this.patientForm = this.fb.group({
+      name: ['', Validators.required],
+      address: ['', Validators.required],
+        phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      dateOfBirth: ['', Validators.required],
+      gender: ['', Validators.required],
+
+      age: [{value: '', disabled: true}]
+
+    });
+    this.patientForm.get('dateOfBirth')?.valueChanges.subscribe(dob=>{
+      if (dob){
+        const age =this.calculateAge(dob);
+        this.patientForm.patchValue({age:age});
+      }
+    });
+    this.loadPatients();
+  }
+
   onSubmit() {
 
   if (this.patientForm.invalid) {

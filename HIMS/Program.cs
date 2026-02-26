@@ -21,7 +21,7 @@ namespace HIMS
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            //builder.Services.AddOpenApi();
+            builder.Services.AddOpenApi();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -58,12 +58,13 @@ namespace HIMS
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                     options.RoutePrefix = string.Empty;
                 });
-              //  app.MapOpenApi();
+                app.MapOpenApi();
             }
 
-           
+
 
             // Ensure CORS middleware runs before authorization and endpoint mapping.
+            app.MapFallbackToFile("index.html");
             app.UseCors("AllowAngular");
 
             app.UseHttpsRedirection();
@@ -72,8 +73,8 @@ namespace HIMS
 
             app.MapControllers();
 
-            await app.RunAsync();
-            app.MapFallbackToFile("index.html");
+            
+            
             await app.RunAsync(); 
         }
     }
