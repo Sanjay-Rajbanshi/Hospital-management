@@ -11,13 +11,13 @@ namespace HIMS.Model
         public Patient Patient { get; set; }
 
      
-        public Guid StaffId { get; set; }
-        public Staff Staff { get; set; }
+        public Guid DoctorId { get; set; }
+        public Staff Doctor { get; set; }
 
-        public DateTime AppointmentDate { get; set; }
+        public DateTime AppointmentDateTime { get; set; }
 
         public  AppointmentStatus AppointmentStatus { get; set; }
 
-        public string Notes { get; set; } 
+       
     }
 }

@@ -20,7 +20,7 @@ namespace HIMS.Services
         {
             return await _context.Appointments
                                  .Include(a => a.Patient)   // Load patient
-                                 .Include(a => a.Staff)     // Load staff
+                                 .Include(a => a.Doctor)     // Load staff
                                  .ToListAsync();
         }
 
@@ -30,7 +30,7 @@ namespace HIMS.Services
 #pragma warning disable CS8603
             return await _context.Appointments
                                  .Include(a => a.Patient)
-                                 .Include(a => a.Staff)
+                                 .Include(a => a.Doctor)
                                  .FirstOrDefaultAsync(a => a.Id == id)!;
 
         }
@@ -38,7 +38,7 @@ namespace HIMS.Services
         // Add new appointment
         public async Task<Appointment> AddAppointmentAsync(Appointment appointment)
         {
-            var staff = await _context.Staffs.FindAsync(appointment.StaffId);
+            var staff = await _context.Staffs.FindAsync(appointment.DoctorId);
             if (staff == null) throw new Exception("Staff not found");
 
             var patient = await _context.Patients.FindAsync(appointment.PatientId);
@@ -51,7 +51,7 @@ namespace HIMS.Services
 #pragma warning disable CS8603
             return await _context.Appointments
                                  .Include(a => a.Patient)
-                                 .Include(a => a.Staff)
+                                 .Include(a => a.Doctor)
                                  .FirstOrDefaultAsync(a => a.Id == appointment.Id)!;
 #pragma warning restore CS8603 
         }
@@ -65,7 +65,7 @@ namespace HIMS.Services
 #pragma warning disable CS8603
             return await _context.Appointments
                                  .Include(a => a.Patient)
-                                 .Include(a => a.Staff)
+                                 .Include(a => a.Doctor)
                                  .FirstOrDefaultAsync(a => a.Id == appointment.Id)!;
 
         }
@@ -75,7 +75,7 @@ namespace HIMS.Services
         {
             var appointment = await _context.Appointments
                                             .Include(a => a.Patient)
-                                            .Include(a => a.Staff)
+                                            .Include(a => a.Doctor)
                                             .FirstOrDefaultAsync(a => a.Id == id);
 
             if (appointment == null) return null!;

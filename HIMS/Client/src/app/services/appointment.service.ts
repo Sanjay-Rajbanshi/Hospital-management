@@ -18,10 +18,8 @@ export class AppointmentService {
   getAppointmentById(id: string):Observable<any>{
     return this.http.get<any>(`${this.apiUrl}/$(id)`);
   }
-updateAppointment(id: string, appointment: any): Observable<any>{
-  return this.http.put<any>(`${this.apiUrl}/${id}`, appointment);
+cancelAppointment(id:string): Observable<any>{
+  return this.http.put(`${this.apiUrl}/cancel/${id}`,{});
 }
-deleteAppointment(id: string): Observable<any>{
-  return this.http.delete<any>(`${this.apiUrl}/${id}`);
-}
+
 }

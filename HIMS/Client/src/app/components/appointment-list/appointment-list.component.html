@@ -1,1 +1,18 @@
 <p>appointment-list works!</p>
+<select formControlName="patientId" id="">
+    <option value="">Select Patient</option>
+    <option *ngFor="let p of patients" [ngValue]="p.id">
+        {{p.name}}
+    </option>
+</select>
+
+<select formControlName="doctorid" id="">
+    <option value="">Select Doctor</option>
+    <option *ngFor="let d of doctors"[ngValue]="d.id">
+        {{d.name}}
+    </option>
+</select>
+
+<input type="datetime-local"
+       formControlName="appointmentDateTime"
+       [min]="minDateTime">

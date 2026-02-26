@@ -4,9 +4,9 @@
     
         public enum AppointmentStatus
         {
-            Booked,
-            Completed,
-            Cancelled
+            Booked =0,
+            Completed = 1,
+            Cancelled = 2
         }
     
 }

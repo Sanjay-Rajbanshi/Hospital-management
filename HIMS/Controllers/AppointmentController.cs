@@ -2,6 +2,7 @@
 using HIMS.Interfaces;
 using HIMS.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HIMS.Controllers
 {
@@ -10,10 +11,12 @@ namespace HIMS.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
+        private readonly DbContext _context;
 
-        public AppointmentController(IAppointmentService appointmentService)
+        public AppointmentController(IAppointmentService appointmentService, DbContext context)
         {
             _appointmentService = appointmentService;
+            _context = context;
         }
 
         [HttpGet]
@@ -25,13 +28,11 @@ namespace HIMS.Controllers
             {
                 Id = a.Id,
                 PatientId = a.PatientId,
-                PatientName = a.Patient?.Name ?? string.Empty,
-                StaffId = a.StaffId,
-                StaffName = a.Staff?.Name ?? string.Empty,
-                StaffRole = a.Staff != null ? a.Staff.Role.ToString() : string.Empty,
-                AppointmentDate = a.AppointmentDate,
-                AppointmentStatus = a.AppointmentStatus,
-                Notes = a.Notes
+                
+                DoctorId = a.DoctorId,
+              
+                AppointmentDateTime = a.AppointmentDateTime,
+               
             });
 
             return Ok(result);
@@ -47,27 +48,31 @@ namespace HIMS.Controllers
             {
                 Id = a.Id,
                 PatientId = a.PatientId,
-                PatientName = a.Patient?.Name ?? string.Empty,
+              
                 
-                Notes = a.Notes
+               
             };
 
             return Ok(result);
         }
 
-        [HttpPost ("Create Appointment")]
+        [HttpPost]
         public async Task<IActionResult> BookAppointment([FromBody] CreateAppointmentDto dto)
         {
+            if (dto.AppointmentDateTime < DateTime.Now)
+            {
+                return BadRequest("Appointment date cannot be in the past,");
+            }
             try
             {
                 var appointment = new Appointment
                 {
                     Id = Guid.NewGuid(),
                     PatientId = dto.PatientId,
-                    StaffId = dto.StaffId,
-                    AppointmentDate = dto.AppointmentDate,
+                    DoctorId = dto.DoctorId,
+                    AppointmentDateTime = dto.AppointmentDateTime,
                     AppointmentStatus = AppointmentStatus.Booked,
-                    Notes = dto.Notes ?? string.Empty
+                   
                 };
 
                 var added = await _appointmentService.AddAppointmentAsync(appointment);
@@ -76,13 +81,11 @@ namespace HIMS.Controllers
                 {
                     Id = added.Id,
                     PatientId = added.PatientId,
-                    PatientName = added.Patient?.Name ?? string.Empty,
-                    StaffId = added.StaffId,
-                    StaffName = added.Staff?.Name ?? string.Empty,
-                    StaffRole = added.Staff != null ? added.Staff.Role.ToString() : string.Empty,
-                    AppointmentDate = added.AppointmentDate,
-                    AppointmentStatus = added.AppointmentStatus,
-                    Notes = added.Notes
+                   
+                    DoctorId = added.DoctorId,
+                   
+                    AppointmentDateTime = added.AppointmentDateTime,
+                  
                 };
 
                 return CreatedAtAction(nameof(GetAppointmentById), new { id = result.Id }, result);
@@ -93,43 +96,20 @@ namespace HIMS.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAppointment(Guid id, [FromBody] CreateAppointmentDto dto)
+        [HttpPut("cancel/{id}")]
+        public async Task<IActionResult> Cancel(Guid id)
         {
-            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+            var appointment = await _context.Set<Appointment>().FindAsync(id);
             if (appointment == null) return NotFound();
 
-            appointment.PatientId = dto.PatientId;
-            appointment.StaffId = dto.StaffId;
-            appointment.AppointmentDate = dto.AppointmentDate;
-            appointment.Notes = dto.Notes ?? string.Empty;
+            appointment.AppointmentStatus = AppointmentStatus.Cancelled;
+            await _context.SaveChangesAsync();
 
-            var updated = await _appointmentService.UpdateAppointmentAsync(appointment);
+            return Ok();
 
-            var result = new AppointmentDto
-            {
-                Id = updated.Id,
-                PatientId = updated.PatientId,
-                PatientName = updated.Patient?.Name ?? string.Empty,
-                StaffId = updated.StaffId,
-                StaffName = updated.Staff?.Name ?? string.Empty,
-                StaffRole = updated.Staff != null ? updated.Staff.Role.ToString() : string.Empty,
-                AppointmentDate = updated.AppointmentDate,
-                AppointmentStatus = updated.AppointmentStatus,
-                Notes = updated.Notes
-            };
-
-            return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAppointment(Guid id)
-        {
-            var deleted = await _appointmentService.DeleteAppointmentAsync(id);
-            if (!deleted) return NotFound();
 
-            return NoContent();
-        }
         
     }
 }
