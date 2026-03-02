@@ -5,7 +5,9 @@ import {ReactiveFormsModule, FormBuilder, FormGroup, Validators} from '@angular/
 import {AgGridModule} from 'ag-grid-angular'
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { HttpClientModule } from '@angular/common/http';
-import { ChangeDetectorRef } from '@angular/core';
+import { ViewChild, ElementRef } from '@angular/core';
+
+
 ModuleRegistry.registerModules([AllCommunityModule]);
 declare var bootstrap: any;
 @Component({
@@ -17,6 +19,32 @@ declare var bootstrap: any;
   templateUrl: './patient-list.component.html',
 })
 export class PatientListComponent implements OnInit {
+
+@ViewChild('liveToast') toastElement!: ElementRef;
+
+toastInstance: any;
+toastMessage: string = '';
+
+
+
+
+
+showToast(message: string) {
+  this.toastMessage = message;
+
+  this.toastInstance = new bootstrap.Toast(this.toastElement.nativeElement, {
+    delay: 3000
+  });
+
+  this.toastInstance.show();
+}
+
+hideToast() {
+  if (this.toastInstance) {
+    this.toastInstance.hide();
+  }
+}
+
   patients: any[]= [];
   
 
@@ -80,12 +108,15 @@ closeViewModal(){
 }
   
   patientForm!: FormGroup;
+
   selectedPatientid: string | null = null;
+  
+
 
   constructor(
     private patientService: PatientService, 
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    
   ) {}
   
 
@@ -113,7 +144,7 @@ closeViewModal(){
       dateOfBirth: ['', Validators.required],
       gender: ['', Validators.required],
 
-      age: [{value: '', disabled: true}]
+      age: [{value: '',}]
 
     });
     this.patientForm.get('dateOfBirth')?.valueChanges.subscribe(dob=>{
@@ -149,7 +180,7 @@ closeViewModal(){
   addPatient(){
     this.patientService.createPatient(this.patientForm.value).subscribe({
       next: ()=>{
-        alert("Patient created successfully");
+        this.showToast("Patient created successfully");
         this.loadPatients();
         this.resetForm();
       },
@@ -173,7 +204,7 @@ closeViewModal(){
     this.patientService.updatePatient(this.selectedPatientid, this.patientForm.value)
     .subscribe({
       next: (res: any) =>{
-        alert(res.message);
+        this.showToast(res.message);
         this.loadPatients();
         this.resetForm();
         this.selectedPatientid = null;
@@ -189,7 +220,7 @@ closeViewModal(){
       this.patientService.deletePatient(id)
       .subscribe({
         next: (res: any) =>{
-          alert(res.message);
+          this.showToast(res.message);
           this.loadPatients();
           this.selectedPatient = null;
           this.isViewMode = false;
@@ -209,9 +240,9 @@ closeViewModal(){
 
 modalInstance: any;
 openModal() {
-  const modalEl = document.getElementById('patientModal');
+  const modalElement = document.getElementById('patientModal');
   if (!this.modalInstance) {
-    this.modalInstance = new bootstrap.Modal(modalEl);
+    this.modalInstance = new bootstrap.Modal(modalElement);
   }
   this.modalInstance.show();
 }

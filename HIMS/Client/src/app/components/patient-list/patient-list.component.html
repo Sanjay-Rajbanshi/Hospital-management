@@ -4,7 +4,7 @@
 </button>
 </div>
 <div class="modal fade" id="patientModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-scrollable">
+  <div class="modal-dialog  modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Add Patient</h5>
@@ -124,3 +124,27 @@ style="width:100%; height:500px;"
 </div>
 
 
+
+
+<div class="toast-container position-fixed top-0 end-0 p-3">
+
+  <div #liveToast
+       class="toast align-items-center text-bg-primary border-0"
+       role="alert"
+       aria-live="assertive"
+       aria-atomic="true">
+
+    <div class="d-flex">
+      <div class="toast-body">
+        {{ toastMessage }}
+      </div>
+
+      <button type="button"
+              class="btn-close btn-close-white me-2 m-auto"
+              (click)="hideToast()">
+      </button>
+    </div>
+
+  </div>
+
+</div>

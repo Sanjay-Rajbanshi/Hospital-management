@@ -23,6 +23,7 @@ appointmentForm!: FormGroup;
 patients: any[]= [];
 doctors: any[]= [];
 appointments: any[] = [];
+rowData: any[]= [];
 statuses = [
   {value : 0, label: 'Booked'},
   {value : 1, label: 'Completed'},
@@ -35,14 +36,15 @@ columnsDefs = [
   {headerName: 'Appointment DateTime', field:'appointmentDateTime'},
   {
     headerName: 'Status',
-    field:'status',
+    field:'appointmentStatus',
     cellRenderer:(params: any) =>{
       switch(params.value){
         case 0: return  `<span class="badge bg-primary"> Booked</span>`;
-        case 1: return `<span class="badge bg-danger">Cancelled</span>`;
-        case 2: return `<span class="badge bg-success">Completed</span>`;
+        case 2: return `<span class="badge bg-danger">Cancelled</span>`;
+        case 1: return `<span class="badge bg-success">Completed</span>`;
         default: return ''
       }
+      
     }
   },
   {headerName: 'Actions',
@@ -67,7 +69,8 @@ ngOnInit(): void{
 this.appointmentForm = this.fb.group({
   patientId: ['', Validators.required],
   doctorId: ['', Validators.required],
-  appointmentDateTime: ['', Validators.required]
+  appointmentDateTime: ['', Validators.required],
+  status: [0]
 });
 this.loadPatients();
 this.loadDoctors();
@@ -90,10 +93,37 @@ loadAppointments(){
     this.appointments = data;
   });
 }
+addAppointments(){
+    console.log(this.appointmentForm.value);
+  console.log(this.appointmentForm.valid);
+  console.log(this.appointmentForm.controls);
+  if(this.appointmentForm.invalid){
+    alert("please fill all the fields");
+    return;
+  }
+  this.appointmentService.createAppointment(this.appointmentForm.value).subscribe({
+    next: ()=>{
+      alert ('Appointment is booked');
+      this.loadAppointments();
+      this.resetForm();
+
+    },
+    error: (err)=>{
+      console.error(err);
+      alert("Error creating appointment");
+
+    }
+
+  });
+}
 cancelAppointment(id:string){
    this.appointmentService.cancelAppointment(id).subscribe(()=>{
     alert('Appointment Cancelled');
     this.loadAppointments();
   })
+}
+resetForm(){
+  this.appointmentForm.reset();
+
 }
 }

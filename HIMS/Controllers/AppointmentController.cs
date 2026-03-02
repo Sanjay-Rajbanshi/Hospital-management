@@ -3,6 +3,8 @@ using HIMS.Interfaces;
 using HIMS.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace HIMS.Controllers
 {
@@ -11,33 +13,42 @@ namespace HIMS.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
-        private readonly DbContext _context;
-
-        public AppointmentController(IAppointmentService appointmentService, DbContext context)
+     
+        public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
-            _context = context;
+            
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAppointments()
         {
-            var appointments = await _appointmentService.GetAllAppointmentsAsync();
-
-            var result = appointments.Select(a => new AppointmentDto
+            try
             {
-                Id = a.Id,
-                PatientId = a.PatientId,
-                
-                DoctorId = a.DoctorId,
-              
-                AppointmentDateTime = a.AppointmentDateTime,
-               
-            });
+                var appointments = await _appointmentService.GetAllAppointmentsAsync();
 
-            return Ok(result);
+                var result = appointments.Select(a => new AppointmentDto
+                {
+                    Id = a.Id,
+                    PatientId = a.PatientId,
+                    PatientName = a.Patient?.Name ?? "",
+
+                    DoctorId = a.DoctorId,
+                    DoctorName = a.Doctor?.Name ?? "",
+
+                    AppointmentDateTime = a.AppointmentDateTime,
+                    AppointmentStatus = a.AppointmentStatus,
+
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message, StackTrace = ex.Message });
+
+            }
         }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAppointmentById(Guid id)
         {
@@ -48,9 +59,14 @@ namespace HIMS.Controllers
             {
                 Id = a.Id,
                 PatientId = a.PatientId,
-              
-                
-               
+                PatientName = a.Patient?.Name ?? "",
+                DoctorId = a.DoctorId,
+                DoctorName = a.Doctor?.Name ?? "",
+                AppointmentDateTime = a.AppointmentDateTime,
+                AppointmentStatus = a.AppointmentStatus,
+
+
+
             };
 
             return Ok(result);
@@ -63,50 +79,45 @@ namespace HIMS.Controllers
             {
                 return BadRequest("Appointment date cannot be in the past,");
             }
-            try
+
+
+            var appointment = new Appointment
             {
-                var appointment = new Appointment
-                {
-                    Id = Guid.NewGuid(),
-                    PatientId = dto.PatientId,
-                    DoctorId = dto.DoctorId,
-                    AppointmentDateTime = dto.AppointmentDateTime,
-                    AppointmentStatus = AppointmentStatus.Booked,
-                   
-                };
+                Id = Guid.NewGuid(),
+                PatientId = dto.PatientId,
+                DoctorId = dto.DoctorId,
+                AppointmentDateTime = dto.AppointmentDateTime,
+                AppointmentStatus = AppointmentStatus.Booked,
 
-                var added = await _appointmentService.AddAppointmentAsync(appointment);
+            };
 
-                var result = new AppointmentDto
-                {
-                    Id = added.Id,
-                    PatientId = added.PatientId,
-                   
-                    DoctorId = added.DoctorId,
-                   
-                    AppointmentDateTime = added.AppointmentDateTime,
-                  
-                };
+            var added = await _appointmentService.AddAppointmentAsync(appointment);
 
-                return CreatedAtAction(nameof(GetAppointmentById), new { id = result.Id }, result);
-            }
-            catch (Exception ex)
+            var result = new AppointmentDto
             {
-                return BadRequest(ex.Message);
-            }
+                Id = added.Id,
+                PatientId = added.PatientId,
+                PatientName = added.Patient?.Name ?? "",
+                DoctorId = added.DoctorId,
+                DoctorName = added.Doctor?.Name ?? "",
+                AppointmentDateTime = added.AppointmentDateTime,
+                AppointmentStatus = added.AppointmentStatus,
+            };
+
+            return CreatedAtAction(nameof(GetAppointmentById), new { id = result.Id }, result); 
         }
+            
+         
 
         [HttpPut("cancel/{id}")]
         public async Task<IActionResult> Cancel(Guid id)
         {
-            var appointment = await _context.Set<Appointment>().FindAsync(id);
-            if (appointment == null) return NotFound();
+            var result = await _appointmentService.CancelAppointmentAsync(id);
 
-            appointment.AppointmentStatus = AppointmentStatus.Cancelled;
-            await _context.SaveChangesAsync();
+            if (!result)
+                return NotFound(new { message = "Appointment not found" });
 
-            return Ok();
-
+            return Ok(new { message = "Appointment cancelled successfully." });
         }
 
 

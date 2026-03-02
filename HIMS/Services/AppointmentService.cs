@@ -71,31 +71,20 @@ namespace HIMS.Services
         }
 
         // Cancel appointment
-        public async Task<Appointment> CancelAppointmentAsync(Guid id)
-        {
-            var appointment = await _context.Appointments
-                                            .Include(a => a.Patient)
-                                            .Include(a => a.Doctor)
-                                            .FirstOrDefaultAsync(a => a.Id == id);
-
-            if (appointment == null) return null!;
-
-            appointment.AppointmentStatus = AppointmentStatus.Cancelled;
-            _context.Appointments.Update(appointment);
-            await _context.SaveChangesAsync();
-
-            return appointment;
-        }
-
-        // Implemented to satisfy IAppointmentService.DeleteAppointmentAsync(Guid)
-        public async Task<bool> DeleteAppointmentAsync(Guid id)
+        public async Task<bool> CancelAppointmentAsync(Guid id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null) return false;
 
-            _context.Appointments.Remove(appointment);
+            if (appointment == null)
+                return false;
+
+            appointment.AppointmentStatus = AppointmentStatus.Cancelled;
+
             await _context.SaveChangesAsync();
+
             return true;
         }
+
+       
     }
 }

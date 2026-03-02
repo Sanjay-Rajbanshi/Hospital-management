@@ -14,15 +14,19 @@
 .modal-content {
   border-radius: 12px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+   
 }
 
 /* Modal Body */
 .modal-body {
   padding: 25px;
   background-color: rgb(243, 226, 226);
+  
+ 
 }
 form div {
   margin-bottom: 15px;
+   
 }
 
 label {
@@ -66,6 +70,7 @@ button {
 .modal-body p {
   margin-bottom: 8px;
   font-size: 14px;
+  
 }
 
 .modal-body strong {
@@ -96,4 +101,5 @@ button {
   
   background-color: #cfd4d9;  
   padding: 20px;
+  
 }
