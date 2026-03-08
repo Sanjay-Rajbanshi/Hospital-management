@@ -3,8 +3,7 @@ using HIMS.Interfaces;
 using HIMS.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Linq.Expressions;
+
 
 namespace HIMS.Controllers
 {

@@ -25,10 +25,6 @@ export class PatientListComponent implements OnInit {
 toastInstance: any;
 toastMessage: string = '';
 
-
-
-
-
 showToast(message: string) {
   this.toastMessage = message;
 
@@ -179,8 +175,8 @@ closeViewModal(){
   }
   addPatient(){
     this.patientService.createPatient(this.patientForm.value).subscribe({
-      next: ()=>{
-        this.showToast("Patient created successfully");
+      next: (res:any)=>{
+        this.showToast(res.message);
         this.loadPatients();
         this.resetForm();
       },

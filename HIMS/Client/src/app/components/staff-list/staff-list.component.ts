@@ -1,12 +1,14 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StaffService } from '../../services/staff.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AgGridModule } from 'ag-grid-angular';
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import { HttpClientModule } from '@angular/common/http';
-import { ChangeDetectorRef } from '@angular/core';
+import { delay } from 'rxjs';
+
+
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 declare var bootstrap: any;
@@ -19,6 +21,26 @@ declare var bootstrap: any;
   styleUrls: ['./staff-list.component.css']
 })
 export class StaffListComponent implements OnInit {
+
+@ViewChild('liveToast') toastElement!: ElementRef;
+toastInstance: any;
+toastMessage: string ='';
+
+showToast(message:string){
+  this.toastMessage = message;
+  this.toastInstance = new bootstrap.Toast(this.toastElement.nativeElement,{
+delay:5000
+  });
+  this.toastInstance.show();
+}
+hideToast(){
+  if(this.toastInstance){
+    this.toastInstance.hide();
+  }
+}
+
+
+
   staffForm!: FormGroup;
   rowData: any[] = [];
   selectedStaffId: string | null = null;
@@ -70,7 +92,7 @@ export class StaffListComponent implements OnInit {
   constructor(
     private staffService: StaffService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+  
   ) {}
 
   ngOnInit(): void {
@@ -96,8 +118,8 @@ export class StaffListComponent implements OnInit {
       return;
     }
     this.staffService.createStaff(this.staffForm.value).subscribe({
-      next: () => {
-        alert('Staff created successfully');
+      next: (res:any) => {
+        this.showToast(res.message);
         this.loadStaff();
         this.resetForm();
       },
@@ -121,8 +143,8 @@ export class StaffListComponent implements OnInit {
   updateStaff() {
     if (!this.selectedStaffId) return;
     this.staffService.updateStaff(this.selectedStaffId, this.staffForm.value).subscribe({
-      next: () => {
-        alert('Staff updated successfully');
+      next: (res:any) => {
+        this.showToast(res.message);
         this.loadStaff();
         this.resetForm();
       },
@@ -133,8 +155,8 @@ export class StaffListComponent implements OnInit {
   deleteStaff(id: string) {
     if (confirm('Are you sure want to delete?')) {
       this.staffService.deleteStaff(id).subscribe({
-        next: () => {
-          alert('Staff deleted');
+        next: (res:any) => {
+          this.showToast(res.message );
           this.loadStaff();
         },
         error: err => console.error(err)
@@ -169,4 +191,7 @@ export class StaffListComponent implements OnInit {
     const role = this.roles.find(r=>r.value===value);
     return role? role.label: '';
   }
+
+
+
 }

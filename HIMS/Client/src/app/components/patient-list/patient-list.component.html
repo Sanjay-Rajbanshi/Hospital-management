@@ -59,10 +59,10 @@
   </div>
 
 
-  <button type="button" *ngIf="!selectedPatientid" (click)="addPatient()" class="btn btn-success">
+  <button type="submit" *ngIf="!selectedPatientid"  class="btn btn-success">
     Add Patient</button>
 
-<button type="button" *ngIf="selectedPatientid" (click)="updatePatient()" class="btn btn-primary">Update Patient</button>
+<button type="submit" *ngIf="selectedPatientid" class="btn btn-primary">Update Patient</button>
 <button type="button" class="btn btn-secondary ms-2" (click)="cancelAction()"> Clear </button>
 
 </form>
@@ -94,7 +94,7 @@ style="width:100%; height:500px;"
 
 
 <div class="modal fade show d-block" *ngIf="isViewMode">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
 
       <div class="modal-header">

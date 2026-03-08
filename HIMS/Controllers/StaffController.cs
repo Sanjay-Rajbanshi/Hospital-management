@@ -28,7 +28,7 @@ namespace HIMS.Controllers
         public async Task<IActionResult> GetStaffById(Guid id)
         {
             var staff = await _staffService.GetStaffByIdAsync(id);
-            if (staff == null) return NotFound();
+            if (staff == null) return NotFound(new {message = "Staff not found"});
             return Ok(staff);
         }
 
@@ -46,7 +46,8 @@ namespace HIMS.Controllers
             };
 
             var added = await _staffService.AddStaffAsync(staff);
-            return CreatedAtAction(nameof(GetStaffById), new { id = added.Id }, added);
+            // return CreatedAtAction(nameof(GetStaffById), new { id = added.Id }, added);
+            return Ok(new { message = "Staff created successfully", data = added });
         }
 
         [HttpPut("{id}")]
@@ -61,15 +62,16 @@ namespace HIMS.Controllers
             existing.PhoneNumber = staffDto.PhoneNumber;
 
             var updated = await _staffService.UpdateStaffAsync(existing);
-            return Ok(updated);
+            return Ok(new {message ="Staff updated successfuly", data = updated});
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStaff(Guid id)
         {
             var result = await _staffService.DeleteStaffAsync(id);
-            if (!result) return NotFound();
-            return NoContent();
+            if (!result) 
+                return NotFound(new { message ="Staff not found"});
+            return Ok(new { message = "Staff deleted successfully"});
         }
 
         

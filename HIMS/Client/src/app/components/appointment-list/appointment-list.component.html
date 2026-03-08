@@ -64,9 +64,10 @@
     <div class="table-name">
        <h2>Saved Appointments</h2>
        </div>
+       <div class="table-container">
        <ag-grid-angular
        class="ag-theme-alpine"
-       style="width: 90%; height: 400px;"
+       style="width: 110%; height: 500px;"
        [rowData]="appointments"
        [columnDefs]="columnsDefs"
        [pagination]="true"
@@ -74,3 +75,4 @@
        >
 
        </ag-grid-angular>
+       </div>
