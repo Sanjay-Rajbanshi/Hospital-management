@@ -7,6 +7,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { PatientService } from '../../services/patient.service';
 import { StaffService } from '../../services/staff.service';
 
+declare var bootstrap: any;
 @Component({
   selector: 'app-appointment-list',
   standalone: true,
@@ -125,5 +126,19 @@ cancelAppointment(id:string){
 resetForm(){
   this.appointmentForm.reset();
 
+}
+
+modalInstance: any;
+openModal(){
+  const modalElement = document.getElementById('appointmentModal');
+  if(!this.modalInstance){
+    this.modalInstance = new bootstrap.Modal(modalElement)
+  }
+  this.modalInstance.show();
+}
+closeModal(){
+  if(this.modalInstance){
+    this.modalInstance.hide();
+  }
 }
 }
